@@ -34,7 +34,17 @@ function get_release_assets {
 function install_release {
   repo="$1"
   version="$2"
-  binary="$3-linux-amd64"
+
+  # Detect platform
+  os=$(uname | tr '[:upper:]' '[:lower:]')
+  arch=$(uname -m)
+  case "$arch" in
+    x86_64) arch="amd64" ;;
+    aarch64 | arm64) arch="arm64" ;;
+    *) echo "Unsupported architecture: $arch" exit 1 ;;
+  esac
+  binary="$3-${os}-${arch}"
+
   checksum="$4"
   release_assets="$(get_release_assets "${repo}" "${version}")"
 
